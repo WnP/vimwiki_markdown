@@ -74,4 +74,4 @@ pygmentize -L style
 ```
 
 If you are lazy you can juste use the one in this repository inside `css`
-directory.
+directory which provide the `monokai` theme.
