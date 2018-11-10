@@ -27,7 +27,6 @@ let g:vimwiki_list = [{
 
 ## Know issues
 
-- No templates support at the moment.
 - If links title and URL are equals and URL doesn't ends with `.html` extention
   then `.html` is append - in order to support vimwiki links.
 
