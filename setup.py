@@ -14,7 +14,7 @@ setup(
     "vimwiki markdown file to html with syntax highlighting.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.1.0",
+    version="0.1.1",
     py_modules=["vimwiki_markdown"],
     packages=[],
     package_data={},
