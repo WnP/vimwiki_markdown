@@ -53,7 +53,7 @@ def main():
 
     # Only markdown is supported
     if SYNTAX != "markdown":
-        sys.stderr.write("Unsupported syntax")
+        sys.stderr.write("Unsupported syntax: " + SYNTAX)
         sys.exit(1)
 
     # Asign template
