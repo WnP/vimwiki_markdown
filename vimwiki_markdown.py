@@ -29,18 +29,13 @@ default_template = """<!DOCTYPE html>
 
 
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
-    """Fix wiki links.
+    """Fix wiki links"""
 
-    If link text and href are equals and href doesn't provide `.html`
-    extention then add it.
-    """
-
-    def handleMatch(self, *args, **kwargs):
-        el, m, index = super().handleMatch(*args, **kwargs)
-        href = el.get("href")
-        if el.text == href and not href.endswith(".html"):
-            el.set("href", href + ".html")
-        return el, m, index
+    def getLink(self, *args, **kwargs):
+        href, title, index, handled = super().getLink(*args, **kwargs)
+        if not href.startswith("http") and not href.endswith(".html"):
+            href += ".html"
+        return href, title, index, handled
 
 
 def main():

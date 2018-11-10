@@ -25,11 +25,6 @@ let g:vimwiki_list = [{
 	\ 'template_ext': '.tpl'}]
 ```
 
-## Know issues
-
-- If links title and URL are equals and URL doesn't ends with `.html` extention
-  then `.html` is append - in order to support vimwiki links.
-
 ## Syntax highlighting
 
 Syntax highlighting is provided by [Pygments](http://pygments.org/), which will
