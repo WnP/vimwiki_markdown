@@ -1,4 +1,4 @@
-body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;max-width:50rem;margin:auto;background:#252525;color:#e8e8e8;}
+body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;max-width:50rem;margin:auto;background:#252525;color:darkgray;padding-bottom:10rem;}
 h1, h2, h3, h4, h5, h6 {font-family: Trebuchet MS, Helvetica, sans-serif; font-weight: bold; line-height:100%; margin-top: 1.5em; margin-bottom: 0.5em;}
 h1 {font-size: 2.6em; color: #909090;}
 h2 {font-size: 2.2em; color: #909090;}
@@ -7,6 +7,7 @@ h4 {font-size: 1.4em; color: #909090;}
 h5 {font-size: 1.3em; color: #989898;}
 h6 {font-size: 1.2em; color: #9c9c9c;}
 p, pre, blockquote, table, ul, ol, dl {margin-top: 1em; margin-bottom: 1em;}
+strong {color: orangered;}
 ul ul, ul ol, ol ol, ol ul {margin-top: 0.5em; margin-bottom: 0.5em;}
 li {margin: 0.3em auto;}
 ul {margin-left: 2em; padding-left: 0.5em;}
@@ -78,5 +79,5 @@ code {
     background-clip: padding-box;
     padding: 0px 3px;
     display: inline-block;
-    color: darkgray;
+    color: #e8e8e8;
 }
