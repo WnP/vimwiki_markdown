@@ -69,8 +69,12 @@ def main():
     filename, _ = os.path.splitext(os.path.basename(INPUT_FILE))
     output_file = os.path.join(OUTPUT_DIR, filename + ".html")
 
+    extensions = ["fenced_code", "tables"]
+    extensions += os.getenv("VIMWIKI_MARKDOWN_EXTENSIONS", "").split(",")
+    extensions = set([e for e in extensions if e] + [CodeHiliteExtension()])
+
     # Setup markdown parser
-    md = markdown.Markdown(extensions=["fenced_code", CodeHiliteExtension()])
+    md = markdown.Markdown(extensions=extensions)
     md.inlinePatterns.deregister("link")
     md.inlinePatterns.register(
         LinkInlineProcessor(markdown.inlinepatterns.LINK_RE, md), "link", 160

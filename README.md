@@ -25,6 +25,18 @@ let g:vimwiki_list = [{
 	\ 'template_ext': '.tpl'}]
 ```
 
+## Markdown extensions
+
+The following [markdown extensions](https://python-markdown.github.io/extensions/)
+are activated by default:
+
+- [fenced_code](https://python-markdown.github.io/extensions/fenced_code_blocks/)
+- [tables](https://python-markdown.github.io/extensions/tables/)
+- [CodeHilite](https://python-markdown.github.io/extensions/code_hilite/)
+
+But you can add more extensions using `VIMWIKI_MARKDOWN_EXTENSIONS` environment
+variable, which is a coma separated list of extensions.
+
 ## Syntax highlighting
 
 Syntax highlighting is provided by [Pygments](http://pygments.org/), which will
