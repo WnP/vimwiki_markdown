@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
+import subprocess
 import sys
 
 import markdown
@@ -27,6 +28,14 @@ default_template = """<!DOCTYPE html>
 </html>
 """
 
+# Retrieve auto index vimwiki option
+with subprocess.Popen(
+    ["vim", "-c", "echo g:vimwiki_dir_link", "-c", ":q", "--headless"],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+) as proc:
+    auto_index = proc.stderr.read() == b"index"
+
 
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     """Fix wiki links"""
@@ -34,7 +43,10 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
         if not href.startswith("http") and not href.endswith(".html"):
-            href += ".html"
+            if auto_index and href.endswith("/"):
+                href += "index.html"
+            elif not href.endswith("/"):
+                href += ".html"
         return href, title, index, handled
 
 
