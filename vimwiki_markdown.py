@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 
@@ -28,13 +29,18 @@ default_template = """<!DOCTYPE html>
 </html>
 """
 
-# Retrieve auto index vimwiki option
-with subprocess.Popen(
-    ["vim", "-c", "echo g:vimwiki_dir_link", "-c", ":q", "--headless"],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-) as proc:
-    auto_index = proc.stderr.read() == b"index"
+vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
+
+if vim:
+    # Retrieve auto index vimwiki option
+    with subprocess.Popen(
+        [vim, "-c", "echo g:vimwiki_dir_link", "-c", ":q", "--headless"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ) as proc:
+        auto_index = proc.stderr.read() == b"index"
+else:
+    auto_index = False
 
 
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
