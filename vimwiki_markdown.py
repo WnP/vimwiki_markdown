@@ -56,6 +56,10 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         return href, title, index, handled
 
 
+def get(l, index, default):
+    return l[index] if index < len(l) else default
+
+
 def main():
 
     FORCE = sys.argv[1]  # noqa - not supported
@@ -64,10 +68,12 @@ def main():
     OUTPUT_DIR = sys.argv[4]
     INPUT_FILE = sys.argv[5]
     CSS_FILE = sys.argv[6]  # noqa - not supported
-    TEMPLATE_PATH = sys.argv[7]
-    TEMPLATE_DEFAULT = sys.argv[8]
-    TEMPLATE_EXT = sys.argv[9]
-    ROOT_PATH = sys.argv[10]
+    TEMPLATE_PATH = get(sys.argv, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
+    TEMPLATE_DEFAULT = get(
+        sys.argv, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
+    )
+    TEMPLATE_EXT = get(sys.argv, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
+    ROOT_PATH = get(sys.argv, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
 
     # Only markdown is supported
     if SYNTAX != "markdown":
@@ -134,7 +140,7 @@ def main():
         for placeholder, value in placeholders.items():
             template = template.replace(placeholder, value)
         template = template.replace(
-            "%root_path%", ROOT_PATH if ROOT_PATH != "-" else "./"
+            "%root_path%", ROOT_PATH if ROOT_PATH != "-" else os.getcwd()
         )
 
         # Parse content
