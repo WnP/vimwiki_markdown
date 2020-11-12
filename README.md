@@ -79,5 +79,17 @@ command:
 pygmentize -L style
 ```
 
-If you are lazy you can juste use the one in this repository inside `css`
+If you are lazy you can just use the one in this repository inside `css`
 directory which provide the `monokai` theme.
+
+## Environment variables
+
+The following environment variables are available, but not mandatory:
+
+- `VIMWIKI_TEMPLATE_PATH`: path to vimwiki HTML template
+- `VIMWIKI_TEMPLATE_DEFAULT`: default HTML template name
+- `VIMWIKI_TEMPLATE_EXT`: default HTML template extension
+- `VIMWIKI_ROOT_PATH`: vimwiki root path
+
+If not set `vimwiki_markdown` will use
+[the default template defined in the source code](https://github.com/WnP/vimwiki_markdown/blob/master/vimwiki_markdown.py#L12-L30).
