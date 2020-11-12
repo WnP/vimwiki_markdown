@@ -1,5 +1,7 @@
 # vimwiki-markdown
 
+[![PyPI version](https://badge.fury.io/py/vimwiki-markdown.svg)](https://badge.fury.io/py/vimwiki-markdown) ![PyPI downloads](https://img.shields.io/pypi/dm/vimwiki-markdown.svg)
+
 [vimwiki](https://github.com/vimwiki/vimwiki) markdown file to html with syntax
 highlighting.
 
