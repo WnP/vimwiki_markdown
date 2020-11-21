@@ -139,8 +139,9 @@ def main():
         # Parse template
         for placeholder, value in placeholders.items():
             template = template.replace(placeholder, value)
+        # use blank insted of os.getcwd() because - mean in root directory that contain css
         template = template.replace(
-            "%root_path%", ROOT_PATH if ROOT_PATH != "-" else os.getcwd()
+            "%root_path%", ROOT_PATH if ROOT_PATH != "-" else ""
         )
 
         # Parse content
