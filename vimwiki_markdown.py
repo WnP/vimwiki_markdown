@@ -60,20 +60,37 @@ def get(l, index, default):
     return l[index] if index < len(l) else default
 
 
+def cleanArgv(argv):
+    res = []
+    for val in argv:
+        tmp = val
+        tmp = tmp[1:] \
+            if tmp.startswith("'") or tmp.startswith('"') \
+            else tmp
+        tmp = tmp[:-1] \
+            if (tmp.endswith("'") and not tmp.endswith("\\'")) \
+            or (tmp.endswith('"') and not tmp.endswith('\\"')) \
+            else tmp
+        res.append(tmp)
+    return res
+
+
 def main():
 
-    FORCE = sys.argv[1]  # noqa - not supported
-    SYNTAX = sys.argv[2]
-    EXTENSION = sys.argv[3]  # noqa - not supported
-    OUTPUT_DIR = sys.argv[4]
-    INPUT_FILE = sys.argv[5]
-    CSS_FILE = sys.argv[6]  # noqa - not supported
-    TEMPLATE_PATH = get(sys.argv, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
+    args = cleanArgv(sys.argv)
+
+    FORCE = args[1]  # noqa - not supported
+    SYNTAX = args[2]
+    EXTENSION = args[3]  # noqa - not supported
+    OUTPUT_DIR = args[4]
+    INPUT_FILE = args[5]
+    CSS_FILE = args[6]  # noqa - not supported
+    TEMPLATE_PATH = get(args, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
     TEMPLATE_DEFAULT = get(
-        sys.argv, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
+        args, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
     )
-    TEMPLATE_EXT = get(sys.argv, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
-    ROOT_PATH = get(sys.argv, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
+    TEMPLATE_EXT = get(args, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
+    ROOT_PATH = get(args, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
 
     # Only markdown is supported
     if SYNTAX != "markdown":
