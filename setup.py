@@ -25,7 +25,7 @@ setup(
     entry_points={
         "console_scripts": [["vimwiki_markdown = vimwiki_markdown:main"]]
     },
-    install_requires=["markdown", "Pygments"],
+    install_requires=["markdown", "Pygments", "markdown_math_escape"],
     extras_require={},
     classifiers=[
         "Development Status :: 4 - Beta",

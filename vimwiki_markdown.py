@@ -8,6 +8,7 @@ import sys
 
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
+from markdown_math_escape import MathEscapeExtension
 
 default_template = """<!DOCTYPE html>
 <html>
@@ -93,7 +94,7 @@ def main():
     filename, _ = os.path.splitext(os.path.basename(INPUT_FILE))
     output_file = os.path.join(OUTPUT_DIR, filename + ".html")
 
-    extensions = ["fenced_code", "tables"]
+    extensions = ["fenced_code", "tables", "markdown.extensions.extra", MathEscapeExtension(delimiters="dollers")]
     extensions += os.getenv("VIMWIKI_MARKDOWN_EXTENSIONS", "").split(",")
     extensions = set([e for e in extensions if e] + [CodeHiliteExtension()])
 
