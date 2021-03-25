@@ -56,41 +56,28 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         return href, title, index, handled
 
 
-def get(l, index, default):
-    return l[index] if index < len(l) else default
-
-
-def cleanArgv(argv):
-    res = []
-    for val in argv:
-        tmp = val
-        tmp = tmp[1:] \
-            if tmp.startswith("'") or tmp.startswith('"') \
-            else tmp
-        tmp = tmp[:-1] \
-            if (tmp.endswith("'") and not tmp.endswith("\\'")) \
-            or (tmp.endswith('"') and not tmp.endswith('\\"')) \
-            else tmp
-        res.append(tmp)
-    return res
+def get(l, index, default=None):
+    res = l[index] if index < len(l) else default
+    if (res[0] == res[-1]) and (res[0] == '"' or res[0] == "'"):
+        return res[1:-1]
+    else:
+        return res
 
 
 def main():
 
-    args = cleanArgv(sys.argv)
-
-    FORCE = args[1]  # noqa - not supported
-    SYNTAX = args[2]
-    EXTENSION = args[3]  # noqa - not supported
-    OUTPUT_DIR = args[4]
-    INPUT_FILE = args[5]
-    CSS_FILE = args[6]  # noqa - not supported
-    TEMPLATE_PATH = get(args, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
+    FORCE = get(sys.argv, 1)  # noqa - not supported
+    SYNTAX = get(sys.argv, 2)
+    EXTENSION = get(sys.argv, 3)
+    OUTPUT_DIR = get(sys.argv, 4)
+    INPUT_FILE = get(sys.argv, 5)
+    CSS_FILE = get(sys.argv, 6)  # noqa - not supported
+    TEMPLATE_PATH = get(sys.argv, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
     TEMPLATE_DEFAULT = get(
-        args, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
+        sys.argv, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
     )
-    TEMPLATE_EXT = get(args, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
-    ROOT_PATH = get(args, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
+    TEMPLATE_EXT = get(sys.argv, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
+    ROOT_PATH = get(sys.argv, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
 
     # Only markdown is supported
     if SYNTAX != "markdown":
