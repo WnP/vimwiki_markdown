@@ -56,18 +56,22 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         return href, title, index, handled
 
 
-def get(l, index, default):
-    return l[index] if index < len(l) else default
+def get(l, index, default=None):
+    res = l[index] if index < len(l) else default
+    if (res[0] == res[-1]) and (res[0] == '"' or res[0] == "'"):
+        return res[1:-1]
+    else:
+        return res
 
 
 def main():
 
-    FORCE = sys.argv[1]  # noqa - not supported
-    SYNTAX = sys.argv[2]
-    EXTENSION = sys.argv[3]  # noqa - not supported
-    OUTPUT_DIR = sys.argv[4]
-    INPUT_FILE = sys.argv[5]
-    CSS_FILE = sys.argv[6]  # noqa - not supported
+    FORCE = get(sys.argv, 1)  # noqa - not supported
+    SYNTAX = get(sys.argv, 2)
+    EXTENSION = get(sys.argv, 3)
+    OUTPUT_DIR = get(sys.argv, 4)
+    INPUT_FILE = get(sys.argv, 5)
+    CSS_FILE = get(sys.argv, 6)  # noqa - not supported
     TEMPLATE_PATH = get(sys.argv, 7, os.getenv("VIMWIKI_TEMPLATE_PATH", ""))
     TEMPLATE_DEFAULT = get(
         sys.argv, 8, os.getenv("VIMWIKI_TEMPLATE_DEFAULT", "")
