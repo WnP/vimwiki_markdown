@@ -46,11 +46,19 @@ else:
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     """Fix wiki links"""
 
+    def __init__(self, *args, extension="md", **kwargs):
+        if not extension.startswith("."):
+            extension = f".{extension}"
+        self.extension = extension
+        return super().__init__(*args, **kwargs)
+
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
         if not href.startswith("http") and not href.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
+            elif href.endswith(self.extension):
+                href = href[: -len(self.extension)] + ".html"
             elif not href.endswith("/"):
                 href += ".html"
         return href, title, index, handled
@@ -59,12 +67,11 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
 def get(l, index, default):
     return l[index] if index < len(l) else default
 
-
 def main():
 
     FORCE = sys.argv[1]  # noqa - not supported
     SYNTAX = sys.argv[2]
-    EXTENSION = sys.argv[3]  # noqa - not supported
+    EXTENSION = sys.argv[3]
     OUTPUT_DIR = sys.argv[4]
     INPUT_FILE = sys.argv[5]
     CSS_FILE = sys.argv[6]  # noqa - not supported
@@ -74,11 +81,6 @@ def main():
     )
     TEMPLATE_EXT = get(sys.argv, 9, os.getenv("VIMWIKI_TEMPLATE_EXT", ""))
     ROOT_PATH = get(sys.argv, 10, os.getenv("VIMWIKI_ROOT_PATH", os.getcwd()))
-
-    # Only markdown is supported
-    if SYNTAX != "markdown":
-        sys.stderr.write("Unsupported syntax: " + SYNTAX)
-        sys.exit(1)
 
     # Asign template
     template = default_template
@@ -101,7 +103,10 @@ def main():
     md = markdown.Markdown(extensions=extensions)
     md.inlinePatterns.deregister("link")
     md.inlinePatterns.register(
-        LinkInlineProcessor(markdown.inlinepatterns.LINK_RE, md), "link", 160
+        LinkInlineProcessor(
+            markdown.inlinepatterns.LINK_RE, md, extension=EXTENSION
+        ),
+        "link", 160
     )
 
     with open(INPUT_FILE, "rb") as f:
