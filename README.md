@@ -36,8 +36,13 @@ are activated by default:
 - [tables](https://python-markdown.github.io/extensions/tables/)
 - [CodeHilite](https://python-markdown.github.io/extensions/code_hilite/)
 
-But you can add more extensions using `VIMWIKI_MARKDOWN_EXTENSIONS` environment
-variable, which is a coma separated list of extensions.
+But you can add more extensions using `VIMWIKI_MARKDOWN_EXTENSIONS` environment variable:
+1. Json list syntax of extension. `["toc", "nl2br"]`.
+1. Json dictionary syntax of extension with configuration
+	 `{"toc": {"baselevel": 2 }, "nl2br": {}}`.
+	 **Note**: `{}` configuration implies no configuration.
+1. [LEGACY] comma separated list of extensions `toc,nl2br`.
+
 
 ## Syntax highlighting
 
