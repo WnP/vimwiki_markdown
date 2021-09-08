@@ -39,6 +39,12 @@ are activated by default:
 But you can add more extensions using `VIMWIKI_MARKDOWN_EXTENSIONS` environment
 variable, which is a coma separated list of extensions.
 
+## Enabling Line Numbers
+
+[line number](https://python-markdown.github.io/extensions/code_hilite/#usage) 
+support of CodeHilite can be enabled by using `VIMWIKI_MARKDOWN_LINENUMS` 
+enviroment variable.
+
 ## Syntax highlighting
 
 Syntax highlighting is provided by [Pygments](http://pygments.org/), which will

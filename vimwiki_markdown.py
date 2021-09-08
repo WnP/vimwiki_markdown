@@ -93,9 +93,12 @@ def main():
     filename, _ = os.path.splitext(os.path.basename(INPUT_FILE))
     output_file = os.path.join(OUTPUT_DIR, filename + ".html")
 
+    linenums = bool(os.getenv("VIMWIKI_MARKDOWN_LINENUMS", False))
     extensions = ["fenced_code", "tables"]
     extensions += os.getenv("VIMWIKI_MARKDOWN_EXTENSIONS", "").split(",")
-    extensions = set([e for e in extensions if e] + [CodeHiliteExtension()])
+    extensions = set(
+        [e for e in extensions if e] + [CodeHiliteExtension(linenums=linenums)]
+    )
 
     # Setup markdown parser
     md = markdown.Markdown(extensions=extensions)
