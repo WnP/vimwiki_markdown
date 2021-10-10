@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import datetime
+import json
 import os
 import shutil
 import subprocess
 import sys
 
 import markdown
-from markdown.extensions.codehilite import CodeHiliteExtension
 
 default_template = """<!DOCTYPE html>
 <html>
@@ -28,6 +28,7 @@ default_template = """<!DOCTYPE html>
     </body>
 </html>
 """
+default_extension = ["fenced_code", "tables", "codehilite"]
 
 vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
 
@@ -93,12 +94,26 @@ def main():
     filename, _ = os.path.splitext(os.path.basename(INPUT_FILE))
     output_file = os.path.join(OUTPUT_DIR, filename + ".html")
 
-    extensions = ["fenced_code", "tables"]
-    extensions += os.getenv("VIMWIKI_MARKDOWN_EXTENSIONS", "").split(",")
-    extensions = set([e for e in extensions if e] + [CodeHiliteExtension()])
+    # parse extension into dict
+    extensions_env = os.getenv(
+        "VIMWIKI_MARKDOWN_EXTENSIONS",
+        "{}",
+    )
+    try:
+        extensions = json.loads(extensions_env)
+    except json.decoder.JSONDecodeError:
+        # backward compatible
+        extensions = extensions_env.split(",")
 
+    if isinstance(extensions, list):
+        extensions = {e: {} for e in extensions}
+
+    extension_names = default_extension + list(extensions.keys())
     # Setup markdown parser
-    md = markdown.Markdown(extensions=extensions)
+    md = markdown.Markdown(
+        extensions=extension_names,
+        extension_configs=extensions,
+    )
     md.inlinePatterns.deregister("link")
     md.inlinePatterns.register(
         LinkInlineProcessor(markdown.inlinepatterns.LINK_RE, md), "link", 160
