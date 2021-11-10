@@ -7,6 +7,7 @@ verify_ssl = true
 vimwiki-markdown = {editable = true,path = "."}
 
 [packages]
+Pygments = ">=2.7.4"
 
 [requires]
 python_version = "3.8"
