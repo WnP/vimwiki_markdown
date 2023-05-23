@@ -8,7 +8,7 @@ import subprocess
 import sys
 import markdown
 
-from re import search, sub
+from re import search
 
 
 default_template = """<!DOCTYPE html>
@@ -55,41 +55,20 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         # regex match for anchor hrefs
         anchor_pattern = r'(.+)#(.+)'
         anchor_match = search(anchor_pattern, href)
-        # regex match for anchor duplicates
-        anchor_dup_pattern = r"(.+)_(\d+$)"
         if not href.startswith("http") and not href.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
+                print("case 1: ", href)
             # anchor md to html link
             elif anchor_match:
                 hlnk = anchor_match.group(1)
                 # slugify md anchors to make them match href ids
                 anchor = markdown.extensions.toc.slugify(anchor_match.group(2),
                                                          "-")
-                # regex match for anchor duplicates
-                anchor_dup_match = search(anchor_dup_pattern, anchor)
-                # new match which happens to be using "_\d+$"
-                if anchor_dup_match and (anchor not in
-                                         anchor_duplicates.keys()):
-                    anchor_duplicates[anchor] = 1
-                # match for a known duplicate anchor
-                elif anchor_dup_match:
-                    anchor_duplicates[anchor_dup_match.group(0)] += 1
-                    anchor = sub(r"\d+$",
-                                 str(int(anchor_dup_match.group(2)) + 1),
-                                 anchor)
-                    anchor_duplicates[anchor] = 1
-                # match which creates a duplicate anchor
-                elif anchor in anchor_duplicates.keys():
-                    anchor_duplicates[anchor] += 1
-                    anchor += f"_{anchor_duplicates[anchor] - 1}"
-                    anchor_duplicates[anchor] = 1
-                # new anchor
-                else:
-                    anchor_duplicates[anchor] = 1
                 href = hlnk + ".html#" + anchor
             elif not href.endswith("/"):
                 href += ".html"
+                print("case 3: ", href)
         return href, title, index, handled
 
 
