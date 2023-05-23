@@ -31,7 +31,6 @@ default_template = """<!DOCTYPE html>
 </html>
 """
 default_extension = ["fenced_code", "tables", "codehilite", "toc"]
-anchor_duplicates = {}
 
 vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
 
@@ -58,7 +57,6 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         if not href.startswith("http") and not href.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
-                print("case 1: ", href)
             # anchor md to html link
             elif anchor_match:
                 hlnk = anchor_match.group(1)
@@ -68,7 +66,6 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
                 href = hlnk + ".html#" + anchor
             elif not href.endswith("/"):
                 href += ".html"
-                print("case 3: ", href)
         return href, title, index, handled
 
 
