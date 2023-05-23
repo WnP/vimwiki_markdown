@@ -8,7 +8,7 @@ import subprocess
 import sys
 import markdown
 
-from re import search
+from re import search, sub
 
 
 default_template = """<!DOCTYPE html>
@@ -30,7 +30,8 @@ default_template = """<!DOCTYPE html>
     </body>
 </html>
 """
-default_extension = ["fenced_code", "tables", "codehilite"]
+default_extension = ["fenced_code", "tables", "codehilite", "toc"]
+anchor_duplicates = {}
 
 vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
 
@@ -53,14 +54,39 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
         href, title, index, handled = super().getLink(*args, **kwargs)
         # regex match for anchor hrefs
         anchor_pattern = r'(.+)#(.+)'
-        match = search(anchor_pattern, href)
+        anchor_match = search(anchor_pattern, href)
+        # regex match for anchor duplicates
+        anchor_dup_pattern = r"(.+)_(\d+$)"
         if not href.startswith("http") and not href.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
             # anchor md to html link
-            elif match:
-                hlnk = match.group(1)
-                anchor = match.group(2)
+            elif anchor_match:
+                hlnk = anchor_match.group(1)
+                # slugify md anchors to make them match href ids
+                anchor = markdown.extensions.toc.slugify(anchor_match.group(2),
+                                                         "-")
+                # regex match for anchor duplicates
+                anchor_dup_match = search(anchor_dup_pattern, anchor)
+                # new match which happens to be using "_\d+$"
+                if anchor_dup_match and (anchor not in
+                                         anchor_duplicates.keys()):
+                    anchor_duplicates[anchor] = 1
+                # match for a known duplicate anchor
+                elif anchor_dup_match:
+                    anchor_duplicates[anchor_dup_match.group(0)] += 1
+                    anchor = sub(r"\d+$",
+                                 str(int(anchor_dup_match.group(2)) + 1),
+                                 anchor)
+                    anchor_duplicates[anchor] = 1
+                # match which creates a duplicate anchor
+                elif anchor in anchor_duplicates.keys():
+                    anchor_duplicates[anchor] += 1
+                    anchor += f"_{anchor_duplicates[anchor] - 1}"
+                    anchor_duplicates[anchor] = 1
+                # new anchor
+                else:
+                    anchor_duplicates[anchor] = 1
                 href = hlnk + ".html#" + anchor
             elif not href.endswith("/"):
                 href += ".html"
