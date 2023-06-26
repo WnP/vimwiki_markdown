@@ -91,6 +91,15 @@ pygmentize -L style
 If you are lazy you can just use the one in this repository inside `css`
 directory which provide the `monokai` theme.
 
+## Anchor links
+
+When naming markdown anchors, the following anchor names should be avoided:
+
+* names terminating with underscores and followed by numeric digits
+  (e.g. foo#bar_69 may end up being incremented to foo#bar_70 and so on)
+* names with more than one dash in a row (e.g. foo#bar-- ---- ---- --69 may
+  collapse to foo#bar-69)
+
 ## Environment variables
 
 The following environment variables are available, but not mandatory:
