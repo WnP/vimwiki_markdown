@@ -6,8 +6,10 @@ import os
 import shutil
 import subprocess
 import sys
-
 import markdown
+
+from re import search
+
 
 default_template = """<!DOCTYPE html>
 <html>
@@ -28,7 +30,7 @@ default_template = """<!DOCTYPE html>
     </body>
 </html>
 """
-default_extension = ["fenced_code", "tables", "codehilite"]
+default_extension = ["fenced_code", "tables", "codehilite", "toc"]
 
 vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
 
@@ -49,16 +51,26 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
 
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
+        # regex match for anchor hrefs
+        anchor_pattern = r'(.+)#(.+)'
+        anchor_match = search(anchor_pattern, href)
         if not href.startswith("http") and not href.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
+            # anchor md to html link
+            elif anchor_match:
+                hlnk = anchor_match.group(1)
+                # slugify md anchors to make them match href ids
+                anchor = markdown.extensions.toc.slugify(anchor_match.group(2),
+                                                         "-")
+                href = hlnk + ".html#" + anchor
             elif not href.endswith("/"):
                 href += ".html"
         return href, title, index, handled
 
 
-def get(l, index, default):
-    return l[index] if index < len(l) else default
+def get(l_, index, default):
+    return l_[index] if index < len(l_) else default
 
 
 def main():
@@ -154,7 +166,8 @@ def main():
         # Parse template
         for placeholder, value in placeholders.items():
             template = template.replace(placeholder, value)
-        # use blank insted of os.getcwd() because - mean in root directory that contain css
+        # use blank insted of os.getcwd() because - mean in root directory that
+        # contain css
         template = template.replace(
             "%root_path%", ROOT_PATH if ROOT_PATH != "-" else ""
         )
