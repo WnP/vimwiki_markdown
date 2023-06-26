@@ -93,7 +93,7 @@ directory which provide the `monokai` theme.
 
 ## Anchor links
 
-When creating markdown anchors, the following anchor names should be avoided:
+When naming markdown anchors, the following anchor names should be avoided:
 
 * names terminating with underscores and followed by numeric digits
   (e.g. foo#bar_69 may end up being incremented to foo#bar_70 and so on)
