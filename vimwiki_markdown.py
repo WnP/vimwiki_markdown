@@ -52,18 +52,31 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
         # regex match for anchor hrefs
-        anchor_pattern = r'(.+)#(.+)'
-        anchor_match = search(anchor_pattern, href)
+        # internal anchors
+        int_anchor_pattern = r'^#(.+)'
+        int_anchor_match = search(int_anchor_pattern, href)
+        # external anchors
+        ext_anchor_pattern = r'(.+)#(.+)'
+        ext_anchor_match = search(ext_anchor_pattern, href)
         if not href.startswith("http") and not href.endswith(".html"):
+            # index md to html link
             if auto_index and href.endswith("/"):
                 href += "index.html"
-            # anchor md to html link
-            elif anchor_match:
-                hlnk = anchor_match.group(1)
+            # internal anchor md to html link
+            elif int_anchor_match:
+                anchor = markdown.extensions.toc.slugify(
+                                                    int_anchor_match.group(0),
+                                                    "-")
+                href = "#" + anchor
+            # external anchor md to html link
+            elif ext_anchor_match:
+                hlnk = ext_anchor_match.group(1)
                 # slugify md anchors to make them match href ids
-                anchor = markdown.extensions.toc.slugify(anchor_match.group(2),
-                                                         "-")
+                anchor = markdown.extensions.toc.slugify(
+                                                    ext_anchor_match.group(2),
+                                                    "-")
                 href = hlnk + ".html#" + anchor
+            # no anchor md to html link
             elif not href.endswith("/"):
                 href += ".html"
         return href, title, index, handled
