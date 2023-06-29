@@ -49,7 +49,7 @@ else:
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     """Fix wiki links"""
 
-    "regex patterns for .md extensions and anchors in href"
+    # regex patterns for .md extensions and anchors in href
     md_ext_pattern = compile_(r'(.+)(\.md)($|#.+)')
     int_anchor_pattern = compile_(r'^#(.+)')
     ext_anchor_pattern = compile_(r'(.+)#(.+)')
