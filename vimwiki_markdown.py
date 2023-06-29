@@ -96,12 +96,7 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
                 href = hlnk + ".html#" + anchor
             # no anchor md to html link
             elif not href.endswith("/"):
-                # filenames with .md extension
-                if href.endswith(".md"):
-                    href = href.replace(".md", ".html")
-                # filenames with .md extension
-                else:
-                    href += ".html"
+                href += ".html"
         return href, title, index, handled
 
 
