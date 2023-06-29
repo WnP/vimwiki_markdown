@@ -8,7 +8,7 @@ import subprocess
 import sys
 import markdown
 
-from re import search
+from re import compile as compile_
 
 
 default_template = """<!DOCTYPE html>
@@ -49,15 +49,33 @@ else:
 class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
     """Fix wiki links"""
 
+    "regex patterns for .md extensions and anchors in href"
+    md_ext_pattern = compile_(r'(.+)(\.md)($|#.+)')
+    int_anchor_pattern = compile_(r'^#(.+)')
+    ext_anchor_pattern = compile_(r'(.+)#(.+)')
+
+    @staticmethod
+    def remove_md_ext(href):
+        # regex match for .md extension
+        md_ext_match = LinkInlineProcessor.md_ext_pattern.search(href)
+        if md_ext_match:
+            # remove .md from href
+            return LinkInlineProcessor.md_ext_pattern.sub(r"\1\3", href)
+        else:
+            return href
+
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
+
+        # check for and remove .md extension
+        href = LinkInlineProcessor.remove_md_ext(href)
+
         # regex match for anchor hrefs
         # internal anchors
-        int_anchor_pattern = r'^#(.+)'
-        int_anchor_match = search(int_anchor_pattern, href)
+        int_anchor_match = LinkInlineProcessor.int_anchor_pattern.search(href)
         # external anchors
-        ext_anchor_pattern = r'(.+)#(.+)'
-        ext_anchor_match = search(ext_anchor_pattern, href)
+        ext_anchor_match = LinkInlineProcessor.ext_anchor_pattern.search(href)
+
         if not href.startswith("http") and not href.endswith(".html"):
             # index md to html link
             if auto_index and href.endswith("/"):
@@ -78,7 +96,12 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
                 href = hlnk + ".html#" + anchor
             # no anchor md to html link
             elif not href.endswith("/"):
-                href += ".html"
+                # filenames with .md extension
+                if href.endswith(".md"):
+                    href = href.replace(".md", ".html")
+                # filenames with .md extension
+                else:
+                    href += ".html"
         return href, title, index, handled
 
 
