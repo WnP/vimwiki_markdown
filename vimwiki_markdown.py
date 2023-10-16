@@ -9,6 +9,8 @@ import sys
 
 import markdown
 
+from urllib.parse import urlparse
+
 default_template = """<!DOCTYPE html>
 <html>
     <head>
@@ -28,7 +30,7 @@ default_template = """<!DOCTYPE html>
     </body>
 </html>
 """
-default_extension = ["fenced_code", "tables", "codehilite"]
+default_extension = ["fenced_code", "tables", "codehilite", "toc"]
 
 vim = shutil.which("vim") and "vim" or (shutil.which("nvim") and "nvim")
 
@@ -49,10 +51,11 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
 
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
-        if not href.startswith("http") and not href.endswith(".html"):
+        url = urlparse(href)
+        if not url.scheme.startswith("http") and not url.path.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
-            elif not href.endswith("/"):
+            elif not href.endswith("/") and not url.fragment:
                 href += ".html"
         return href, title, index, handled
 
