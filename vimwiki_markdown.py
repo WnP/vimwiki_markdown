@@ -6,10 +6,10 @@ import os
 import shutil
 import subprocess
 import sys
+
 import markdown
 
-from re import search
-
+from urllib.parse import urlparse
 
 default_template = """<!DOCTYPE html>
 <html>
@@ -51,26 +51,17 @@ class LinkInlineProcessor(markdown.inlinepatterns.LinkInlineProcessor):
 
     def getLink(self, *args, **kwargs):
         href, title, index, handled = super().getLink(*args, **kwargs)
-        # regex match for anchor hrefs
-        anchor_pattern = r'(.+)#(.+)'
-        anchor_match = search(anchor_pattern, href)
-        if not href.startswith("http") and not href.endswith(".html"):
+        url = urlparse(href)
+        if not url.scheme.startswith("http") and not url.path.endswith(".html"):
             if auto_index and href.endswith("/"):
                 href += "index.html"
-            # anchor md to html link
-            elif anchor_match:
-                hlnk = anchor_match.group(1)
-                # slugify md anchors to make them match href ids
-                anchor = markdown.extensions.toc.slugify(anchor_match.group(2),
-                                                         "-")
-                href = hlnk + ".html#" + anchor
-            elif not href.endswith("/"):
+            elif not href.endswith("/") and not url.fragment:
                 href += ".html"
         return href, title, index, handled
 
 
-def get(l_, index, default):
-    return l_[index] if index < len(l_) else default
+def get(l, index, default):
+    return l[index] if index < len(l) else default
 
 
 def main():
@@ -166,8 +157,7 @@ def main():
         # Parse template
         for placeholder, value in placeholders.items():
             template = template.replace(placeholder, value)
-        # use blank insted of os.getcwd() because - mean in root directory that
-        # contain css
+        # use blank insted of os.getcwd() because - mean in root directory that contain css
         template = template.replace(
             "%root_path%", ROOT_PATH if ROOT_PATH != "-" else ""
         )
